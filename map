@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive World Map with Custom Pin Color</title>
+    <style>
+        #map {
+            width: 100%;
+            height: 600px;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <script>
+        function initMap() {
+            const map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 7,
+            center: { lat: 47.01202, lng: -91.72691 },
+            mapTypeId: google.maps.MapTypeId.SATELLITE, // Set map type to satellite view
+         styles: [
+            {
+                featureType: "poi",
+                elementType: "labels",
+                stylers: [{ visibility: "off" }] // Turn off labels
+            }
+        ]
+    });
+        
+        // data for pins (latitude, longitude, pin text, color, and url)
+        const pins = [
+
+            // Home spots
+
+            // St.Michael ("50")
+            { lat: 45.212105, lon: -93.59265, text: "50", icon: '/DodsData/GreenPin.png' },
+
+            // Carlton area
+            { lat: 46.663096, lon: -92.404882, text: '"Carlton Bridge" 15m & +20m', icon: '/DodsData/GreenPin.png', url: '/Users/beckc/OneDrive/Documents/Code/CarltonPage.html' },
+            { lat: 46.663196, lon: -92.404622, text: "10m Medium gap", icon: '/DodsData/GreenPin.png', url: '/Users/beckc/OneDrive/Documents/Code/CarltonPage.html' },
+            { lat: 46.662926, lon: -92.404882, text: "10m", icon: '/DodsData/GreenPin.png', url: '/Users/beckc/OneDrive/Documents/Code/CarltonPage.html' },
+
+            // Duluth
+            { lat: 46.778889, lon: -92.092778, text: '"Lift Bridge" 41.15m Police', icon: '/DodsData/RedPin.png' },
+            
+            { lat: 46.838500, lon: -92.006797, text: '"Lester Tracks" 16m', icon: '/DodsData/GreenPin.png' },
+            { lat: 46.838200, lon: -92.006897, text: '"Lester Platform" 6.5m', icon: '/DodsData/GreenPin.png' },
+            { lat: 46.843700, lon: -92.009500, text: '"Amity Falls" 12m Difficult gap', icon: '/DodsData/YellowPin.png' },
+           
+            // Random scatterd singles along north shore
+            { lat: 46.949000, lon: -91.781650, text: '"Knife Tracks" 7.5m', icon: '/DodsData/GreenPin.png' },
+            { lat: 47.010556, lon: -91.669444, text: '"Two Harbors Light House" 6.5m', icon: '/DodsData/GreenPin.png' },
+            { lat: 47.014722, lon: -91.671667, text: '"Ore Docks" +20m Police', icon: '/DodsData/RedPin.png' },
+            
+            // Gooseberry Falls
+            { lat: 47.148333, lon: -91.476944, text: '"Fifth Falls" 9.5m', icon: '/DodsData/GreenPin.png' },
+           
+            // Black Dog
+            { lat: 47.292222, lon: -91.245900, text: '"Black Dog Island" 5m to 13m', icon: '/DodsData/GreenPin.png' },
+            { lat: 47.294750, lon: -91.246300, text: "4m, Shallow", icon: '/DodsData/GreenPin.png' },
+
+            // Tettegouche
+            { lat: 47.336667, lon: -91.198333, text: '"Balcony" 4.5m & 6.5m', icon: '/DodsData/GreenPin.png' },
+
+            // Temperance
+            { lat: 47.556432, lon: -90.873611, text: "17m", icon: '/DodsData/GreenPin.png' },
+            { lat: 47.554350, lon: -90.874257, text: '"Temperance Precision" 14m', icon: '/DodsData/YellowPin.png' },
+            
+        ];
+
+            
+        // Add pins to the map with custom marker icons
+        pins.forEach((pin) => {
+            const marker = new google.maps.Marker({
+             position: { lat: pin.lat, lng: pin.lon },
+             map: map,
+             title: pin.text,
+             icon: {
+                 url: pin.icon,
+                 scaledSize: new google.maps.Size(32, 32),
+                },
+            });
+
+            // Add click event to display pin information
+            marker.addListener('click', () => {
+                const infoWindow = new google.maps.InfoWindow({
+                    content: `<strong>${pin.text}</strong><br>${pin.description}`,
+                });
+                infoWindow.open(map, marker);
+            });
+
+            // Add double-click event to navigate to the associated URL
+            marker.addListener('dblclick', () => {
+                // Find the pin object associated with this marker by its position
+                const clickedPin = pins.find((pin) => pin.lat === marker.getPosition().lat() && pin.lon === marker.getPosition().lng());
+
+                // Check if a pin with a matching position was found
+                if (clickedPin && clickedPin.url) {
+                    // Redirect to the URL associated with the clicked pin
+                    window.location.href = clickedPin.url;
+                }
+            });
+        });
+    }
+
+        // Load the Google Maps API
+        function loadMapScript() {
+            const script = document.createElement('script');
+            script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAjeq1GPrPj5d2A6q1JlEJS9yKDvb17ksw&callback=initMap';
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+        }
+    
+        // Call the function to load the API
+        loadMapScript();
+    </script>
+</body>
+</html>
